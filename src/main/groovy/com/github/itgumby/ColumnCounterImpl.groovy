@@ -21,7 +21,18 @@ public class ColumnCounterImpl implements ColumnCounter {
         if (value.length() == 0) {
             countBlanks++
         } else {
-            frequency.put(value, 1)
+            def count = frequency.get(value) ?: 0
+            frequency.put(value, count+1)
         }
+    }
+
+    @java.lang.Override
+    void readValues(List<String> values) {
+        values.each { it -> readValue(it) }
+    }
+
+    @java.lang.Override
+    long getValueCount(String value) {
+        frequency.get(value)?.toLong() ?: 0
     }
 }
