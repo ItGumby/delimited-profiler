@@ -51,4 +51,16 @@ class TestFieldCounter extends Specification {
         "c" | 3
         "NOT_FOUND" | 0
     }
+
+    def "return number of ocurrences of repeated values"() {
+        when:   fc.readValues(["a", "b", "b", "c", "c", "c"])
+        then:   fc.getValueCount(value) == count
+
+        where:
+        value | count
+        "a" | 1
+        "b" | 2
+        "c" | 3
+        "NOT_FOUND" | 0
+    }
 }

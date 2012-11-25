@@ -5,6 +5,9 @@ public class ColumnCounterImpl implements ColumnCounter {
     long countRecords = 0
     long countBlanks = 0
 
+    String prevValue = null
+    long prevCount = 0
+
     @java.lang.Override
     public long getRecordCount() {
         return countRecords
@@ -26,8 +29,22 @@ public class ColumnCounterImpl implements ColumnCounter {
     }
 
     private void updateFrequency(String value) {
-        def count = frequency.get(value) ?: 0
-        frequency.put(value, count+1)
+        if ( prevValue.equals(value) ) {
+            prevCount++
+        } else {
+            lazyUpdateMap(value)
+        }
+    }
+
+    private void lazyUpdateMap(String newVal) {
+        // minimize updates
+        if (prevValue != null) {
+            def count = frequency.get(prevValue) ?: 0
+            frequency.put(prevValue, count+prevCount)
+        }
+
+        prevValue = newVal
+        prevCount = newVal==null ? 0 : 1
     }
 
     @java.lang.Override
@@ -37,6 +54,9 @@ public class ColumnCounterImpl implements ColumnCounter {
 
     @java.lang.Override
     long getValueCount(String value) {
+        if ( prevValue.equals(value) ) {
+            lazyUpdateMap(null)
+        }
         frequency.get(value)?.toLong() ?: 0
     }
 
