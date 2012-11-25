@@ -20,8 +20,10 @@ class TestFieldCounter extends Specification {
         fc.getRecordCount() == numRecords
 
         where:
-        values << [ [], ["a"], ["a", "b", "c"]]
-        numRecords << [0, 1, 3]
+        numRecords | values
+        0   | []
+        1   | ["a"]
+        3   | ["a", "b", "c"]
     }
 
     def "count blanks for zero, 1, or more blanks"() {
@@ -32,8 +34,10 @@ class TestFieldCounter extends Specification {
         fc.getBlankCount() == blanks
 
         where:
-        values << [ [], [""], ["", "", ""]]
-        blanks << [0, 1, 3]
+        blanks | values
+        0   | []
+        1   | [""]
+        3   | ["", "", "b", ""]
     }
 
     def "return number of ocurrences of values"() {
@@ -41,8 +45,10 @@ class TestFieldCounter extends Specification {
         then:   fc.getValueCount(value) == count
 
         where:
-        value << ["a", "b", "c", "NOT_FOUND"]
-        count << [1, 2, 3, 0]
-
+        value | count
+        "a" | 1
+        "b" | 2
+        "c" | 3
+        "NOT_FOUND" | 0
     }
 }
